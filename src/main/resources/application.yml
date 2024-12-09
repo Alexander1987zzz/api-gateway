@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: dialog-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/v1/dialog/**
+          filters:
+            - name: AddRequestHeader
+              args:
+                name: x-request-id
+                value: "#{request.getHeader('x-request-id') ?: T(java.util.UUID).randomUUID().toString()}"
+        - id: dialog-service-v2
+          uri: http://localhost:8082
+          predicates:
+            - Path=/v2/dialog/**
+          filters:
+            - name: AddRequestHeader
+              args:
+                name: x-request-id
+                value: "#{request.getHeader('x-request-id') ?: T(java.util.UUID).randomUUID().toString()}"
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
+
